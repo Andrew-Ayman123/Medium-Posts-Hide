@@ -13,73 +13,47 @@
     }
   });
 
-  // Helper function to safely process and filter GraphQL response JSON
+  // Helper function to process and filter GraphQL response JSON specifically for WebInlineRecommendedFeedQuery
   function filterGraphQLData(jsonData) {
     let totalRemoved = 0;
 
-    function findAndFilterFeedItems(obj, depth = 0) {
-      if (!obj || typeof obj !== 'object' || depth > 5) return 0;
-      let removed = 0;
+    function processOperation(op) {
+      if (!op || !op.data) return;
 
-      // If obj is an array, iterate over elements
-      if (Array.isArray(obj)) {
-        for (const child of obj) {
-          removed += findAndFilterFeedItems(child, depth + 1);
-        }
-        return removed;
-      }
+      // Target ONLY webRecommendedFeed (the exact root property of WebInlineRecommendedFeedQuery)
+      const feed = op.data.webRecommendedFeed;
+      if (feed && Array.isArray(feed.items)) {
+        const origLen = feed.items.length;
+        feed.items = feed.items.filter((item) => {
+          if (!item) return true;
+          const post = item.post || (item.__typename === 'Post' ? item : null);
+          if (!post) return true; // Keep non-post items (e.g., promotional banners)
 
-      // Check if obj has an 'items' array containing feed posts
-      if (Array.isArray(obj.items)) {
-        const hasPosts = obj.items.some((item) => item && (item.post || item.__typename === 'Post'));
-        if (hasPosts) {
-          const origLen = obj.items.length;
-          obj.items = obj.items.filter((item) => {
-            if (!item) return true;
-            const post = item.post || (item.__typename === 'Post' ? item : null);
-            if (!post) return true; // Keep non-post items (e.g., promotional banners)
+          const isExplicitlyPublic = post.visibility === 'PUBLIC' || post.isLocked === false;
+          const isExplicitlyLocked = post.isLocked === true || post.visibility === 'LOCKED';
 
-            const isExplicitlyPublic = post.visibility === 'PUBLIC' || post.isLocked === false;
-            const isExplicitlyLocked = post.isLocked === true || post.visibility === 'LOCKED';
-
-            // Always preserve PUBLIC stories
-            if (isExplicitlyPublic) {
-              return true;
-            }
-
-            // Remove locked member-only stories
-            if (isExplicitlyLocked) {
-              return false;
-            }
-
+          // Always preserve PUBLIC stories
+          if (isExplicitlyPublic) {
             return true;
-          });
-          removed += (origLen - obj.items.length);
-        }
-      }
+          }
 
-      // Safely traverse child properties (avoiding recursive post metadata)
-      for (const key of Object.keys(obj)) {
-        if (key === 'items' || key === 'post' || key === 'creator' || key === 'collection' || key === 'tags') {
-          continue;
-        }
-        const child = obj[key];
-        if (child && typeof child === 'object') {
-          removed += findAndFilterFeedItems(child, depth + 1);
-        }
-      }
+          // Remove locked member-only stories
+          if (isExplicitlyLocked) {
+            return false;
+          }
 
-      return removed;
+          return true;
+        });
+        totalRemoved += (origLen - feed.items.length);
+      }
     }
 
     if (Array.isArray(jsonData)) {
       for (const op of jsonData) {
-        if (op && op.data) {
-          totalRemoved += findAndFilterFeedItems(op.data);
-        }
+        processOperation(op);
       }
     } else if (jsonData && jsonData.data) {
-      totalRemoved += findAndFilterFeedItems(jsonData.data);
+      processOperation(jsonData);
     }
 
     return totalRemoved;
