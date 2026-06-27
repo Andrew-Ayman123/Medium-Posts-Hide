@@ -72,11 +72,16 @@
       // Target ONLY webRecommendedFeed (the exact root property of WebInlineRecommendedFeedQuery)
       const feed = op.data.webRecommendedFeed;
       if (feed && Array.isArray(feed.items)) {
-        // Ensure pagingInfo carries the limit of 25 to match client requests
-        if (feed.pagingInfo && feed.pagingInfo.next) {
-          feed.pagingInfo.next.limit = 25;
-          if (feed.pagingInfo.next.to !== undefined && feed.pagingInfo.next.to !== null) {
-            feed.pagingInfo.next.to = String(feed.pagingInfo.next.to);
+        // Update all pagingInfo limit references to 25 in the response payload
+        if (feed.pagingInfo) {
+          if (feed.pagingInfo.limit !== undefined) {
+            feed.pagingInfo.limit = 25;
+          }
+          if (feed.pagingInfo.next) {
+            feed.pagingInfo.next.limit = 25;
+            if (feed.pagingInfo.next.to !== undefined && feed.pagingInfo.next.to !== null) {
+              feed.pagingInfo.next.to = String(feed.pagingInfo.next.to);
+            }
           }
         }
 
