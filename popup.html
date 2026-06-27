@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medium Feed Filter</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Header with Extension Logo -->
+    <div class="header-row">
+      <img src="icons/logo.svg" alt="Extension Logo" class="logo" />
+      <div class="title-group">
+        <h1>Medium Feed Filter</h1>
+        <span class="subtitle">Public stories only, clean feed</span>
+      </div>
+    </div>
+
+    <!-- Status Banner with Toggle -->
+    <div id="statusBanner" class="status-banner active">
+      <div class="status-info">
+        <span class="status-dot"></span>
+        <div class="status-text-group">
+          <span class="status-title">EXTENSION STATUS</span>
+          <span id="statusText" class="status-state">ACTIVE (ON)</span>
+        </div>
+      </div>
+      <label class="switch">
+        <input id="enabledToggle" type="checkbox" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Description -->
+    <div class="description-box">
+      <p>Automatically filters out locked member-only posts from your Medium homepage and feed.</p>
+    </div>
+
+    <!-- Stats Card -->
+    <div class="info-card">
+      <div class="stat-row">
+        <span class="stat-label">Locked Posts Filtered:</span>
+        <span id="deletedCountLabel" class="stat-value">0</span>
+      </div>
+      <div class="divider"></div>
+      <div class="meta-row">
+        <span>Created by <strong>Andrew Ayman</strong></span>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

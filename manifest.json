@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Medium Feed Filter",
+  "version": "1.0",
+  "description": "Intercept Medium GraphQL feed requests and add a filter to hide non-public posts.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.medium.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Medium Feed Filter",
+    "default_icon": {
+      "16": "icons/icon16.svg",
+      "32": "icons/icon32.svg",
+      "48": "icons/icon48.svg",
+      "128": "icons/icon128.svg"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.medium.com/*"],
+      "js": ["content-bridge.js"],
+      "run_at": "document_start",
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["*://*.medium.com/*"],
+      "js": ["interceptor.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
+}
