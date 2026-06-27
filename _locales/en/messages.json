@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "Medium Recommended Memeber Posts Filter",
+    "description": "The name of the extension."
+  },
+  "appDescription": {
+    "message": "Hide Recommended Memeber Posts from Medium Feed",
+    "description": "Hide Recommended Memeber Posts from Medium Feed"
+  }
+}

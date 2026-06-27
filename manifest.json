@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Medium Feed Filter",
+  "default_locale": "en",
+  "name": "Medium Recommended Memeber Posts Filter",
   "version": "1.0",
-  "description": "Intercept Medium GraphQL feed requests and add a filter to hide non-public posts.",
+  "description": "Hide Recommended Memeber Posts from Medium Feed",
   "permissions": [
     "storage"
   ],
@@ -13,25 +14,39 @@
     "default_popup": "popup.html",
     "default_title": "Medium Feed Filter",
     "default_icon": {
-      "16": "icons/icon16.svg",
-      "32": "icons/icon32.svg",
-      "48": "icons/icon48.svg",
-      "128": "icons/icon128.svg"
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
     }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["*://*.medium.com/*"],
-      "js": ["content-bridge.js"],
+      "matches": [
+        "*://*.medium.com/*"
+      ],
+      "js": [
+        "content-bridge.js"
+      ],
       "run_at": "document_start",
       "world": "ISOLATED"
     },
     {
-      "matches": ["*://*.medium.com/*"],
-      "js": ["interceptor.js"],
+      "matches": [
+        "*://*.medium.com/*"
+      ],
+      "js": [
+        "interceptor.js"
+      ],
       "run_at": "document_start",
       "world": "MAIN"
     }
